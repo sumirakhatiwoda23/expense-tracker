@@ -12,17 +12,7 @@
 
 ![Paisa expense ledger running on Render](docs/preview.png)
 
-## About
 
-Paisa is a small, complete full-stack project built around one everyday job:
-keeping track of personal spending without a spreadsheet. You enter an amount,
-what it was for, a category and a date — the app keeps a running budget with a
-remaining balance, a category breakdown, and a searchable, day-grouped ledger.
-
-It is deliberately readable end to end: a React 19 frontend with no UI
-framework, an Express 5 REST API with server-side validation, and a thin data
-layer with interchangeable PostgreSQL, MySQL and SQLite adapters. That makes it
-a good reference for how the pieces fit together — or a base to extend.
 
 **Highlights**
 
