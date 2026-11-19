@@ -1,7 +1,48 @@
 # Paisa — Full-Stack Expense Ledger
 
-A complete expense tracker with a **React** frontend, a **Node.js + Express** API,
-and a **SQL database** you can inspect in **DBeaver**.
+[![Live demo](https://img.shields.io/badge/live_demo-onrender-2ea44f?style=flat-square&logo=render&logoColor=white)](https://paisa-expense-ledger.onrender.com)
+[![React](https://img.shields.io/badge/React-19-149eca?style=flat-square&logo=react&logoColor=white)](https://react.dev)
+[![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169e1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+
+A calm, **Rs-first** expense tracker: log what you spend, watch your budget
+balance update, and download a polished PDF report. React frontend, Express API,
+and a real SQL database you can open in DBeaver.
+
+**Live demo → <https://paisa-expense-ledger.onrender.com>**
+*(free Render tier — the first visit may take ~30–60 s to wake up)*
+
+![Paisa expense ledger running on Render](docs/preview.png)
+
+## About
+
+Paisa is a small, complete full-stack project built around one everyday job:
+keeping track of personal spending without a spreadsheet. You enter an amount,
+what it was for, a category and a date — the app keeps a running budget with a
+remaining balance, a category breakdown, and a searchable, day-grouped ledger.
+
+It is deliberately readable end to end: a React 19 frontend with no UI
+framework, an Express 5 REST API with server-side validation, and a thin data
+layer with interchangeable PostgreSQL, MySQL and SQLite adapters. That makes it
+a good reference for how the pieces fit together — or a base to extend.
+
+**Highlights**
+
+- **Budget that means something** — live remaining balance, progress bar, and an
+  over-budget warning instead of a silent negative number.
+- **One currency, done properly** — everything is in Pakistani rupees and
+  formatted as `Rs 1,250.00`; there is no misleading currency switcher.
+- **PDF report in one click** — bordered tables, dark-green headers, and every
+  expense amount highlighted in red, generated server-side with PDFKit.
+- **A database you can actually inspect** — PostgreSQL on Render, MySQL 8
+  locally, or SQLite with zero setup; all the same schema, all DBeaver-friendly.
+- **Sensible API hygiene** — validation on every write, parameter-binding
+  queries, a health endpoint, and graceful shutdown.
+- **Small details** — animated totals, toast feedback, keyboard search
+  (`Ctrl/Cmd + K`), responsive layout, and an empty state that explains itself.
+
+> Paisa is a **single-user** app: there is no login or per-user data separation
+> yet, so treat the public demo as a demo. Adding auth is the natural next step.
 
 ```
 React (Vite)  ──HTTP──▶  Express API  ──▶  PostgreSQL (Render)
@@ -44,7 +85,8 @@ On first boot the backend logs which database it picked, e.g.:
 
 ## Using MySQL (optional)
 
-The app user has not been created on the system MySQL server yet. To create it:
+To use MySQL instead of the SQLite fallback, create the database and app user
+with the included script:
 
 ```bash
 cd paisa-expense-ledger
@@ -89,11 +131,15 @@ The repo ships a `render.yaml` blueprint that creates **one free web service**
 and **one free PostgreSQL database**, wires the connection string in, and
 builds the React app at deploy time.
 
-1. Push the repo to GitHub (already configured).
+**This deployment:** <https://paisa-expense-ledger.onrender.com> — Node web
+service + Render PostgreSQL 17, both on the free plan in the `oregon` region.
+
+To recreate it from scratch:
+
+1. Push the repo to GitHub.
 2. In Render: **New → Blueprint**.
 3. Pick the `expense-tracker` repo and click **Apply**.
-4. Wait for the build, then open the service URL — e.g.
-   `https://paisa-expense-ledger.onrender.com`.
+4. Wait for the build, then open the service URL.
 
 What the blueprint does:
 
@@ -107,8 +153,8 @@ What the blueprint does:
 
 Notes:
 
-- **Free tier sleeps** after ~15 minutes of inactivity; the first visit wakes it
-  up (a few seconds).
+- **Free tier sleeps** after ~15 minutes of inactivity; the first visit takes
+  ~30–60 seconds to wake it up.
 - Render's **free PostgreSQL expires after 30 days** — upgrade the database or
   point `DATABASE_URL` at another Postgres (Neon, Supabase, …) to keep data. If
   you use an external URL, also set `DATABASE_SSL=true`.
@@ -142,6 +188,7 @@ paisa-expense-ledger/
 │   ├── .env                  DB mode and credentials
 │   └── data/paisa.db         SQLite database (created on first run)
 ├── legacy/                   previous vanilla-JS version (reference only)
+├── docs/preview.png          screenshot used in this README
 ├── render.yaml               Render blueprint (web service + Postgres)
 └── package.json              root scripts
 ```
