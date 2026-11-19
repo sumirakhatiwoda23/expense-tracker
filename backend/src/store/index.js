@@ -1,13 +1,16 @@
 import { createMysqlStore } from "./mysql.js";
+import { createPostgresStore } from "./postgres.js";
 import { createSqliteStore } from "./sqlite.js";
 
 let current = null;
 
 /**
  * DB_CLIENT:
- *   auto   → try MySQL, fall back to SQLite (default)
- *   mysql  → require MySQL
- *   sqlite → use the embedded SQLite file
+ *   auto     → PostgreSQL if DATABASE_URL is set, else try MySQL,
+ *              then fall back to SQLite (default)
+ *   postgres → require DATABASE_URL
+ *   mysql    → require MySQL
+ *   sqlite   → use the embedded SQLite file
  */
 export async function initStore() {
   const mode = String(process.env.DB_CLIENT || "auto").toLowerCase();
@@ -18,6 +21,12 @@ export async function initStore() {
     return { client: "sqlite", file: current.file };
   }
 
+  if (mode === "postgres") {
+    current = createPostgresStore();
+    await current.init();
+    return { client: "postgres" };
+  }
+
   if (mode === "mysql") {
     current = createMysqlStore();
     await current.init();
@@ -25,7 +34,16 @@ export async function initStore() {
   }
 
   if (mode !== "auto") {
-    throw new Error(`Unknown DB_CLIENT "${mode}" — use auto, mysql or sqlite.`);
+    throw new Error(
+      `Unknown DB_CLIENT "${mode}" — use auto, postgres, mysql or sqlite.`
+    );
+  }
+
+  if (process.env.DATABASE_URL) {
+    const postgres = createPostgresStore();
+    await postgres.init();
+    current = postgres;
+    return { client: "postgres" };
   }
 
   const candidate = createMysqlStore();

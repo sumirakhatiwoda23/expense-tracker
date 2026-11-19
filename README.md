@@ -4,22 +4,24 @@ A complete expense tracker with a **React** frontend, a **Node.js + Express** AP
 and a **SQL database** you can inspect in **DBeaver**.
 
 ```
-React (Vite)  ──HTTP──▶  Express API  ──▶  SQLite file (default)
-  :5173                     :4000      └─▶  MySQL 8 (when configured)
+React (Vite)  ──HTTP──▶  Express API  ──▶  PostgreSQL (Render)
+  :5173                     :4000      ├─▶  MySQL 8 (when configured)
+                                        └─▶  SQLite file (local fallback)
 ```
 
-The backend prefers **MySQL**, and automatically falls back to a local **SQLite**
-file when MySQL isn't configured. That means the app runs immediately with zero
-database setup — and switches to MySQL as soon as the app user exists.
+The backend picks its database in this order: **PostgreSQL** when
+`DATABASE_URL` is set (Render), then **MySQL**, then a local **SQLite** file.
+That means the app runs immediately with zero database setup — and switches to
+a hosted database in production.
 
 ## Stack
 
-| Layer     | Technology                                   |
-| --------- | -------------------------------------------- |
-| Frontend  | React 19, Vite 8, plain CSS                  |
-| Backend   | Node.js, Express 5, mysql2, node:sqlite      |
-| Database  | SQLite (default) or MySQL 8 (DBeaver-ready)  |
-| Dev tools | nodemon, concurrently, Vite proxy            |
+| Layer     | Technology                                      |
+| --------- | ----------------------------------------------- |
+| Frontend  | React 19, Vite 8, plain CSS                     |
+| Backend   | Node.js, Express 5, pg, mysql2, node:sqlite     |
+| Database  | PostgreSQL (Render), MySQL 8, or SQLite         |
+| Dev tools | nodemon, concurrently, Vite proxy               |
 
 ## Quick start
 
@@ -81,6 +83,40 @@ npm start       # Express serves the build + API on :4000
 
 Open <http://localhost:4000>.
 
+## Deploy on Render
+
+The repo ships a `render.yaml` blueprint that creates **one free web service**
+and **one free PostgreSQL database**, wires the connection string in, and
+builds the React app at deploy time.
+
+1. Push the repo to GitHub (already configured).
+2. In Render: **New → Blueprint**.
+3. Pick the `expense-tracker` repo and click **Apply**.
+4. Wait for the build, then open the service URL — e.g.
+   `https://paisa-expense-ledger.onrender.com`.
+
+What the blueprint does:
+
+| Setting | Value |
+| --- | --- |
+| Build | `npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci && npm --prefix frontend run build` |
+| Start | `npm --prefix backend start` |
+| Health check | `/api/health` |
+| Database | Render PostgreSQL, linked via `DATABASE_URL` |
+| Static app | Express serves `frontend/dist` on the same origin |
+
+Notes:
+
+- **Free tier sleeps** after ~15 minutes of inactivity; the first visit wakes it
+  up (a few seconds).
+- Render's **free PostgreSQL expires after 30 days** — upgrade the database or
+  point `DATABASE_URL` at another Postgres (Neon, Supabase, …) to keep data. If
+  you use an external URL, also set `DATABASE_SSL=true`.
+- Prefer MySQL instead? Set `DB_CLIENT=mysql` plus the `DB_*` variables in the
+  Render dashboard (Render does not host MySQL itself).
+- Without any database env vars the app still runs on SQLite, but Render's
+  filesystem is ephemeral, so data resets on restart/redeploy.
+
 ## Project structure
 
 ```
@@ -98,19 +134,21 @@ paisa-expense-ledger/
 │   │   ├── server.js         startup/shutdown
 │   │   ├── validate.js       request validation
 │   │   └── store/
-│   │       ├── index.js      picks MySQL or SQLite
+│   │       ├── index.js      picks PostgreSQL, MySQL or SQLite
+│   │       ├── postgres.js   PostgreSQL adapter (Render)
 │   │       ├── mysql.js      MySQL adapter
 │   │       └── sqlite.js     SQLite adapter
 │   ├── setup.sql             optional MySQL database + user
 │   ├── .env                  DB mode and credentials
 │   └── data/paisa.db         SQLite database (created on first run)
 ├── legacy/                   previous vanilla-JS version (reference only)
+├── render.yaml               Render blueprint (web service + Postgres)
 └── package.json              root scripts
 ```
 
 ## Database schema
 
-Both adapters expose the same shape.
+All adapters expose the same shape and API.
 
 **expenses**
 

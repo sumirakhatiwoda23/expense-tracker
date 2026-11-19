@@ -9,6 +9,8 @@ try {
   info = await initStore();
   if (info.client === "mysql") {
     console.log("[db] MySQL connected and schema ready");
+  } else if (info.client === "postgres") {
+    console.log("[db] PostgreSQL connected and schema ready");
   } else {
     console.log("[db] Using SQLite (MySQL not available)");
     console.log(`[db] File: ${info.file}`);
