@@ -1,0 +1,16 @@
+{
+  "name": "paisa-expense-ledger",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Paisa expense ledger — React frontend, Express API, MySQL database",
+  "scripts": {
+    "dev": "concurrently -n api,web -c green,cyan \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "setup:db": "sudo mysql < backend/setup.sql",
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
+  }
+}
