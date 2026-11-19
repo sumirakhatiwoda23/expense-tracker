@@ -7,7 +7,7 @@
     "dev": "concurrently -n api,web -c green,cyan \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build",
     "start": "npm --prefix backend start",
-    "render:build": "npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci && npm --prefix frontend run build",
+    "render:build": "npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci --include=dev && npm --prefix frontend run build",
     "setup:db": "sudo mysql < backend/setup.sql",
     "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install"
   },

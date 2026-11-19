@@ -5,7 +5,7 @@ services:
     plan: free
     region: oregon
     branch: main
-    buildCommand: npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci && npm --prefix frontend run build
+    buildCommand: npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci --include=dev && npm --prefix frontend run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:

@@ -99,7 +99,7 @@ What the blueprint does:
 
 | Setting | Value |
 | --- | --- |
-| Build | `npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci && npm --prefix frontend run build` |
+| Build | `npm ci --omit=dev && npm --prefix backend ci --omit=dev && npm --prefix frontend ci --include=dev && npm --prefix frontend run build` |
 | Start | `npm --prefix backend start` |
 | Health check | `/api/health` |
 | Database | Render PostgreSQL, linked via `DATABASE_URL` |
