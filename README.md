@@ -5,9 +5,7 @@
 [![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169e1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 
-A calm, **Rs-first** expense tracker: log what you spend, watch your budget
-balance update, and download a polished PDF report. React frontend, Express API,
-and a real SQL database you can open in DBeaver.
+
 
 **Live demo → <https://paisa-expense-ledger.onrender.com>**
 *(free Render tier — the first visit may take ~30–60 s to wake up)*
